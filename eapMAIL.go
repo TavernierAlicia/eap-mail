@@ -201,7 +201,7 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	}
 
 	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", \n Nous avons le regret de vous informer que vous avez actuellement " + nb +
-		" paiements en retard pour un montant total de " + strconv.Itoa(facts.Total) +
+		" en retard pour un montant total de " + strconv.Itoa(facts.Total) +
 		" €.\n Veuillez régulariser votre situation au plus vite, dans le cas contraire nous seront contraints à désactiver votre compte. \n " +
 		"Vous pouvez à tout moment contacter notre service client en cas de difficultés concernant le paiement. \n" +
 		"Vous trouverez ci-joint " + formule
