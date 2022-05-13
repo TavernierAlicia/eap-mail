@@ -153,7 +153,7 @@ func SendCliFact(link string, mail string) (err error) {
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	return err
@@ -179,7 +179,7 @@ func SendBossFact(etab eapFact.FactEtab) (err error) {
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	return err
@@ -212,7 +212,7 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
-		panic(err)
+		fmt.Println(err)
 	}
 
 	return err
