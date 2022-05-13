@@ -200,7 +200,7 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 		formule = " la facture concernée."
 	}
 
-	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", Nous avons le regret de vous informer que vous avez actuellement " + nb +
+	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", \n Nous avons le regret de vous informer que vous avez actuellement " + nb +
 		" paiements en retard pour un montant total de " + strconv.Itoa(facts.Total) +
 		" €.\n Veuillez régulariser votre situation au plus vite, dans le cas contraire nous seront contraints à désactiver votre compte. \n " +
 		"Vous pouvez à tout moment contacter notre service client en cas de difficultés concernant le paiement. \n" +
@@ -212,12 +212,36 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
-	fmt.Println("try to send mail")
 	for _, link := range facts.Facts {
-		fmt.Println("attach " + link)
 		m.Attach(link)
 	}
-	fmt.Println("attached")
+
+	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+	}
+
+	return err
+}
+
+func SuspendCreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
+	to := etab.Mail
+	from := viper.GetString("sendmail.service_mail")
+	pass := viper.GetString("sendmail.service_pwd")
+
+	subject := "Compte suspendu - EAP Retard de paiement"
+
+	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", \n Suite à vos retards de paiements, nous vous annonçons que votre compte est désormais suspendu. \n" +
+		"Vous ne pourrez donc plus profiter du service EAP tant que le montant de " + strconv.Itoa(facts.Total) +
+		" € ne sera pas remboursé de votre part. \n En cas de non paiement, des poursuites pourraient être engagées. \n " +
+		"Nous vous invitons donc à prendre contact avec notre service client afin d'effectuer un recouvrement de votre dette. \n"
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
 
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
