@@ -207,8 +207,10 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 
 	fmt.Println("try to send mail")
 	for _, link := range facts.Facts {
+		fmt.Println("attach " + link)
 		m.Attach(link)
 	}
+	fmt.Println("attached")
 
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
