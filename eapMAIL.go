@@ -190,18 +190,25 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	from := viper.GetString("sendmail.service_mail")
 	pass := viper.GetString("sendmail.service_pwd")
 
-	subject := "Facturation du " + etab.Fact_infos.Date
+	subject := "URGENT - EAP Retard de paiement"
 
-	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", Nous avons le regret de vous informer que vous avez actuellement " + strconv.Itoa(facts.Number) +
+	nb := "un paiement "
+	formule := " les factures concernées."
+
+	if facts.Number > 1 {
+		nb = strconv.Itoa(facts.Number) + " paiements "
+		formule = " la facture concernée."
+	}
+
+	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", Nous avons le regret de vous informer que vous avez actuellement " + nb +
 		" paiements en retard pour un montant total de " + strconv.Itoa(facts.Total) +
-		". Veuillez régulariser votre situation au plus vite, dans le cas contraire nous seront contraints à désactiver votre compte. " +
-		"Vous pouvez à tout moment contacter notre service client en cas de difficultés concernant le paiement." +
-		"Vous trouverez ci-joint les factures concernées."
+		" €.\n Veuillez régulariser votre situation au plus vite, dans le cas contraire nous seront contraints à désactiver votre compte. \n " +
+		"Vous pouvez à tout moment contacter notre service client en cas de difficultés concernant le paiement. \n" +
+		"Vous trouverez ci-joint " + formule
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
 	m.SetHeader("To", to)
-	// m.SetAddressHeader("Cc", "dan@example.com", "Dan")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
