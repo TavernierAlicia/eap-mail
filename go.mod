@@ -1,4 +1,4 @@
-module github.com/TavernierAlicia/eap-mail
+module github.com/TavernierAlicia/eap-MAIL
 
 go 1.17
 
