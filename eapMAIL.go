@@ -5,6 +5,7 @@ import (
 	"net/smtp"
 	"time"
 
+	eapFact "github.com/TavernierAlicia/eap-FACT"
 	"github.com/spf13/viper"
 	"gopkg.in/gomail.v2"
 )
@@ -73,8 +74,7 @@ type FactEtab struct {
 	Etab_offer     Offer
 }
 
-// case add password
-func addPWD(subForm Subscription, token string) (err error) {
+func AddPWD(subForm Subscription, token string) (err error) {
 	to := subForm.Mail
 	from := viper.GetString("sendmail.service_mail")
 	pass := viper.GetString("sendmail.service_pwd")
@@ -95,8 +95,7 @@ func addPWD(subForm Subscription, token string) (err error) {
 	return err
 }
 
-// case update password
-func newPWD(ownerInfos Owner, token string) (err error) {
+func NewPWD(ownerInfos Owner, token string) (err error) {
 	to := ownerInfos.Mail
 	from := viper.GetString("sendmail.service_mail")
 	pass := viper.GetString("sendmail.service_pwd")
@@ -117,8 +116,7 @@ func newPWD(ownerInfos Owner, token string) (err error) {
 	return err
 }
 
-// case cli fact
-func sendCliFact(link string, mail string) (err error) {
+func SendCliFact(link string, mail string) (err error) {
 	to := mail
 	from := viper.GetString("sendmail.service_mail")
 	pass := viper.GetString("sendmail.service_pwd")
@@ -182,8 +180,7 @@ func sendCliFact(link string, mail string) (err error) {
 	return err
 }
 
-// case boss fact
-func sendBossFact(etab FactEtab) (err error) {
+func SendBossFact(etab eapFact.FactEtab) (err error) {
 	to := etab.Mail
 	from := viper.GetString("sendmail.service_mail")
 	pass := viper.GetString("sendmail.service_pwd")
@@ -202,7 +199,6 @@ func sendBossFact(etab FactEtab) (err error) {
 
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
-	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
 		panic(err)
 	}
