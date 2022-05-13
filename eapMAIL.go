@@ -251,3 +251,27 @@ func SuspendCreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 
 	return err
 }
+
+func ConfirmDeleteAccount(etab eapFact.FactEtab) (err error) {
+	to := etab.Mail
+	from := viper.GetString("sendmail.service_mail")
+	pass := viper.GetString("sendmail.service_pwd")
+
+	subject := "Compte supprimé - EAP"
+
+	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", \n Suite à votre demande, votre compte a bien été supprimé, ainsi que toutes les informations qu'il contenait." +
+		"Nous vous souhaitons une bonne continuation et, peut-être à bientôt?"
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
+
+	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+	}
+
+	return err
+}
