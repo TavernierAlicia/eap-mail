@@ -205,6 +205,7 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
+	fmt.Println("try to send mail")
 	for _, link := range facts.Facts {
 		m.Attach(link)
 	}
