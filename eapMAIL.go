@@ -3,6 +3,7 @@ package eapMAIL
 import (
 	"fmt"
 	"net/smtp"
+	"strconv"
 	"time"
 
 	eapFact "github.com/TavernierAlicia/eap-FACT"
@@ -46,32 +47,10 @@ type Owner struct {
 	Country  string `db:"country"`
 }
 
-type Offer struct {
-	Id       int     `db:"id"`
-	Name     string  `db:"name"`
-	PriceHT  float64 `db:"priceHT"`
-	PriceTTC float64 `db:"priceTTC"`
-}
-
-type FactInfos struct {
-	Link string `db:"link"`
-	Date string `db:"created"`
-}
-
-type FactEtab struct {
-	Owner_civility string `db:"owner_civility"`
-	Owner_name     string `db:"owner_name"`
-	Owner_surname  string `db:"owner_surname"`
-	Mail           string `db:"mail"`
-	Phone          string `db:"phone"`
-	Name           string `db:"name"`
-	Fact_addr      string `db:"fact_addr"`
-	Fact_cp        int    `db:"fact_cp"`
-	Fact_city      string `db:"fact_city"`
-	Fact_country   string `db:"fact_country"`
-	Offer          int    `db:"offer"`
-	Fact_infos     FactInfos
-	Etab_offer     Offer
+type Unpaid struct {
+	Total  int `db:"total"`
+	Number int `db:"number"`
+	Facts  []string
 }
 
 func AddPWD(subForm Subscription, token string) (err error) {
@@ -196,6 +175,39 @@ func SendBossFact(etab eapFact.FactEtab) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 	m.Attach(etab.Fact_infos.Link)
+
+	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+
+	if err := d.DialAndSend(m); err != nil {
+		panic(err)
+	}
+
+	return err
+}
+
+func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
+	to := etab.Mail
+	from := viper.GetString("sendmail.service_mail")
+	pass := viper.GetString("sendmail.service_pwd")
+
+	subject := "Facturation du " + etab.Fact_infos.Date
+
+	message := "Bonjour, " + etab.Owner_civility + " " + etab.Owner_name + ", Nous avons le regret de vous informer que vous avez actuellement " + strconv.Itoa(facts.Number) +
+		" paiements en retard pour un montant total de " + strconv.Itoa(facts.Total) +
+		". Veuillez régulariser votre situation au plus vite, dans le cas contraire nous seront contraints à désactiver votre compte. " +
+		"Vous pouvez à tout moment contacter notre service client en cas de difficultés concernant le paiement." +
+		"Vous trouverez ci-joint les factures concernées."
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	// m.SetAddressHeader("Cc", "dan@example.com", "Dan")
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
+
+	for _, link := range facts.Facts {
+		m.Attach(link)
+	}
 
 	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
 
