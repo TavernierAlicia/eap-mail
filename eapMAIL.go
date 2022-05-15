@@ -145,7 +145,7 @@ func SendCliFact(link string, mail string) (err error) {
 	m.SetBody("text/html", message)
 	m.Attach(link)
 
-	d := gomail.NewPlainDialer("smtp.ionos.fr:465", 465, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
@@ -172,7 +172,7 @@ func SendBossFact(etab eapFact.FactEtab) (err error) {
 	m.SetBody("text/html", message)
 	m.Attach(etab.Fact_infos.Link)
 
-	d := gomail.NewPlainDialer("smtp.ionos.fr:465", 465, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
