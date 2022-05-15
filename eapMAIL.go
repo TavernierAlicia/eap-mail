@@ -64,12 +64,10 @@ func AddPWD(subForm Subscription, token string) (err error) {
 
 	msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
 
-	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", from, pass, "smtp.gmail.com"), from, []string{to}, []byte(msg))
+	err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
 
 	if err != nil {
 		fmt.Println("smtp error %s", err)
-	} else {
-		fmt.Println("mail okay")
 	}
 	return err
 }
@@ -85,12 +83,10 @@ func NewPWD(ownerInfos Owner, token string) (err error) {
 
 	msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
 
-	err = smtp.SendMail("smtp.gmail.com:587", smtp.PlainAuth("", from, pass, "smtp.gmail.com"), from, []string{to}, []byte(msg))
+	err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
 
 	if err != nil {
 		fmt.Println("smtp error %s", err)
-	} else {
-		fmt.Println("mail okay")
 	}
 	return err
 }
@@ -149,7 +145,7 @@ func SendCliFact(link string, mail string) (err error) {
 	m.SetBody("text/html", message)
 	m.Attach(link)
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr:465", 465, from, pass)
 
 	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
@@ -176,7 +172,7 @@ func SendBossFact(etab eapFact.FactEtab) (err error) {
 	m.SetBody("text/html", message)
 	m.Attach(etab.Fact_infos.Link)
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr:465", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
@@ -216,7 +212,7 @@ func CreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 		m.Attach(link)
 	}
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
@@ -243,7 +239,7 @@ func SuspendCreanceMail(etab eapFact.FactEtab, facts Unpaid) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
@@ -268,7 +264,7 @@ func AskDeleteAccount(etab eapFact.FactEtab, echeance string) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
@@ -292,7 +288,7 @@ func ConfirmDeleteAccount(etab eapFact.FactEtab) (err error) {
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 
-	d := gomail.NewPlainDialer("smtp.gmail.com", 587, from, pass)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
