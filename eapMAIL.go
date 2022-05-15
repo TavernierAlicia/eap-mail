@@ -2,7 +2,6 @@ package eapMAIL
 
 import (
 	"fmt"
-	"net/smtp"
 	"strconv"
 	"time"
 
@@ -62,14 +61,26 @@ func AddPWD(subForm Subscription, token string) (err error) {
 
 	message := "Bonjour " + subForm.Civility + " " + subForm.Name + " " + subForm.Surname + ", votre compte est fin prêt! Vous pouvez maintenant cliquer sur le lien suivant afin de créer votre mot de passe: " + viper.GetString("links.create_pwd") + "?token=" + token
 
-	msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
 
-	err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
-
-	if err != nil {
-		fmt.Println("smtp error %s", err)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
 	}
+
 	return err
+	// msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
+
+	// err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
+
+	// if err != nil {
+	// 	fmt.Println("smtp error %s", err)
+	// }
+	// return err
 }
 
 func NewPWD(ownerInfos Owner, token string) (err error) {
@@ -81,14 +92,26 @@ func NewPWD(ownerInfos Owner, token string) (err error) {
 
 	message := "Bonjour " + ownerInfos.Civility + " " + ownerInfos.Name + " " + ownerInfos.Surname + " vous avez demandé à créer un nouveau mot de passe pour l'établissement suivant: " + ownerInfos.Entname + " Siret: " + ownerInfos.Siret + ", " + ownerInfos.Addr + ", " + ownerInfos.City + ", cliquez sur le lien suivant pour créer un nouveau mot de passe: " + viper.GetString("links.create_pwd") + "?token=" + token
 
-	msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
+	// msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
 
-	err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
 
-	if err != nil {
-		fmt.Println("smtp error %s", err)
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
 	}
+
 	return err
+	// err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
+
+	// if err != nil {
+	// 	fmt.Println("smtp error %s", err)
+	// }
+	// return err
 }
 
 func SendCliFact(link string, mail string) (err error) {
