@@ -73,14 +73,6 @@ func AddPWD(subForm Subscription, token string) (err error) {
 	}
 
 	return err
-	// msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
-
-	// err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
-
-	// if err != nil {
-	// 	fmt.Println("smtp error %s", err)
-	// }
-	// return err
 }
 
 func NewPWD(ownerInfos Owner, token string) (err error) {
@@ -91,8 +83,6 @@ func NewPWD(ownerInfos Owner, token string) (err error) {
 	subject := "Votre nouveau mot de passe"
 
 	message := "Bonjour " + ownerInfos.Civility + " " + ownerInfos.Name + " " + ownerInfos.Surname + " vous avez demandé à créer un nouveau mot de passe pour l'établissement suivant: " + ownerInfos.Entname + " Siret: " + ownerInfos.Siret + ", " + ownerInfos.Addr + ", " + ownerInfos.City + ", cliquez sur le lien suivant pour créer un nouveau mot de passe: " + viper.GetString("links.create_pwd") + "?token=" + token
-
-	// msg := "From: " + from + " " + "\n" + "To: " + to + "\n" + "Subject: " + subject + "\n\n" + message
 
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
@@ -106,12 +96,7 @@ func NewPWD(ownerInfos Owner, token string) (err error) {
 	}
 
 	return err
-	// err = smtp.SendMail("smtp.ionos.fr:465", smtp.PlainAuth("", from, pass, "smtp.ionos.fr"), from, []string{to}, []byte(msg))
 
-	// if err != nil {
-	// 	fmt.Println("smtp error %s", err)
-	// }
-	// return err
 }
 
 func SendCliFact(link string, mail string) (err error) {
@@ -163,14 +148,12 @@ func SendCliFact(link string, mail string) (err error) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
 	m.SetHeader("To", to)
-	// m.SetAddressHeader("Cc", "dan@example.com", "Dan")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 	m.Attach(link)
 
 	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
 
-	// Send the email to Bob, Cora and Dan.
 	if err := d.DialAndSend(m); err != nil {
 		fmt.Println(err)
 	}
@@ -190,7 +173,6 @@ func SendBossFact(etab eapFact.FactEtab) (err error) {
 	m := gomail.NewMessage()
 	m.SetHeader("From", from)
 	m.SetHeader("To", to)
-	// m.SetAddressHeader("Cc", "dan@example.com", "Dan")
 	m.SetHeader("Subject", subject)
 	m.SetBody("text/html", message)
 	m.Attach(etab.Fact_infos.Link)
