@@ -53,9 +53,9 @@ type Unpaid struct {
 }
 
 type Message struct {
-	Name string `db:"name"`
-	Mail string `db:"mail"`
-	Msg  string `db:"message"`
+	Name string `json:"name"`
+	Mail string `json:"mail"`
+	Msg  string `json:"message"`
 }
 
 func SendContact(content Message) (err error) {
