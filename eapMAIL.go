@@ -52,6 +52,45 @@ type Unpaid struct {
 	Facts  []string
 }
 
+type Message struct {
+	Name string `db:"name"`
+	Mail string `db:"mail"`
+	Msg  string `db:"message"`
+}
+
+func SendContact(content Message) (err error) {
+	to := viper.GetString("sendmail.service_mail")
+	from := viper.GetString("sendmail.service_mail")
+	pass := viper.GetString("sendmail.service_pwd")
+
+	subject := "Nouveau message de " + content.Name
+
+	message := `<h1>Nouveau message de ` + content.Name + ` (` + content.Mail + `) </h1>
+		<table style='border: 1px solid black; margin-right:10px;'>
+			<h2> De: ` + content.Name + ` (` + content.Mail + `) </h2>
+			</br>
+
+			<p>` + content.Msg + `</p>
+
+		</table>
+	
+	`
+
+	m := gomail.NewMessage()
+	m.SetHeader("From", from)
+	m.SetHeader("To", to)
+	m.SetHeader("Subject", subject)
+	m.SetBody("text/html", message)
+
+	d := gomail.NewPlainDialer("smtp.ionos.fr", 465, from, pass)
+	if err := d.DialAndSend(m); err != nil {
+		fmt.Println(err)
+	}
+
+	return err
+
+}
+
 func AddPWD(subForm Subscription, token string) (err error) {
 	to := subForm.Mail
 	from := viper.GetString("sendmail.service_mail")
